@@ -156,6 +156,8 @@ class ElegantCalculator:
             {"text": "0", "row": 5, "col": 1, "style": "number", "cmd": lambda: self.add_digit("0")},
             {"text": ".", "row": 5, "col": 2, "style": "number", "cmd": self.add_decimal},
             {"text": "=", "row": 5, "col": 3, "style": "equals", "cmd": self.calculate},
+            # Ligne 7 - NOUVELLE LIGNE POUR x²
+            {"text": "x²", "row": 6, "col": 0, "style": "function", "cmd": self.power},
         ]
 
         # Création des boutons
@@ -350,6 +352,17 @@ class ElegantCalculator:
             self.new_number = True
         self.update_display()
 
+    # Dans votre fichier calculator.py, ajoutez cette méthode dans la classe ElegantCalculator:---------
+    def power(self):
+        """Élève au carré (version simple)"""
+        try:
+            result = float(self.current_input) ** 2
+            if result.is_integer():
+                result = int(result)
+            self.current_input = str(result)
+            self.update_display()
+        except ValueError:
+            pass
     def update_display(self):
         """Met à jour l'affichage"""
         # Formatage avec séparateurs de milliers
