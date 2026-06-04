@@ -1,12 +1,6 @@
 from button import *
-from abc import ABC, abstractmethod
 
-class ButtonFactory(ABC):
-    @abstractmethod
-    def create_button(self, button_type, value=None):
-        pass
-
-class CalculatorButtonFactory(ButtonFactory):
+class CalculatorButtonFactory:
     def create_button(self, button_type, value=None):
         if button_type == "digit":
             return DigitButton(value)
@@ -22,8 +16,25 @@ class CalculatorButtonFactory(ButtonFactory):
             return SignButton()
         elif button_type == "square":
             return SquareButton()
-        # Dans factory.py, ajoutez dans la méthode create_button:
         elif button_type == "decimal":
             return DecimalButton()
+        elif button_type == "sin":
+            return SinButton()
+        elif button_type == "cos":
+            return CosButton()
+        elif button_type == "tan":
+            return TanButton()
+        elif button_type == "ln":
+            return LnButton()
+        elif button_type == "log":
+            return LogButton()
+        elif button_type == "sqrt":
+            return SqrtButton()
+        elif button_type == "pi":
+            return PiButton()
+        elif button_type == "e":
+            return EButton()
+        elif button_type == "power":
+            return PowerButton()
         else:
             raise ValueError(f"Type de bouton inconnu: {button_type}")

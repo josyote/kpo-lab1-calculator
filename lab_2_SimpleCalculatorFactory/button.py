@@ -80,3 +80,75 @@ class DecimalButton(Button):
 
     def get_display_text(self):
         return "."
+
+
+class SinButton(Button):
+    def press(self):
+        return "sin"
+
+    def get_display_text(self):
+        return "sin"
+
+
+class CosButton(Button):
+    def press(self):
+        return "cos"
+
+    def get_display_text(self):
+        return "cos"
+
+
+class TanButton(Button):
+    def press(self):
+        return "tan"
+
+    def get_display_text(self):
+        return "tan"
+
+
+class LnButton(Button):
+    def press(self):
+        return "ln"
+
+    def get_display_text(self):
+        return "ln"
+
+
+class LogButton(Button):
+    def press(self):
+        return "log"
+
+    def get_display_text(self):
+        return "log"
+
+
+class SqrtButton(Button):
+    def press(self):
+        return "sqrt"
+
+    def get_display_text(self):
+        return "√x"
+
+
+class PiButton(Button):
+    def press(self):
+        return "pi"
+
+    def get_display_text(self):
+        return "π"
+
+
+class EButton(Button):
+    def press(self):
+        return "e"
+
+    def get_display_text(self):
+        return "e"
+
+
+class PowerButton(Button):
+    def press(self):
+        return "^"
+
+    def get_display_text(self):
+        return "xʸ"

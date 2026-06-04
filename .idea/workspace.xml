@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="25180db6-d8c3-4e11-8de0-bbbffc859f46" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/button.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/calculator_logic.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/factory.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/ui.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="25180db6-d8c3-4e11-8de0-bbbffc859f46" name="Changes" comment="lab2">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/button.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/button.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/calculator_logic.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/calculator_logic.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/factory.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/factory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/ui.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +31,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "josyote"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/josyote/kpo-lab1-calculator.git",
+    "accountId": "80b16305-17d2-41ac-9f47-574b51601565"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -44,6 +54,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.calculator.executor": "Run",
+    "Python.main (1).executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -86,6 +97,30 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pythonProject1" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="RUN_TOOL" value="" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="pythonProject1" />
       <option name="ENV_FILES" value="" />
@@ -113,6 +148,7 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.main (1)" />
       </list>
     </recent_temporary>
   </component>
@@ -133,8 +169,17 @@
       <option name="presentableId" value="Default" />
       <updated>1772572822952</updated>
       <workItem from="1780432857181" duration="1072000" />
-      <workItem from="1780554294314" duration="1759000" />
+      <workItem from="1780554294314" duration="3143000" />
     </task>
+    <task id="LOCAL-00001" summary="lab2">
+      <option name="closed" value="true" />
+      <created>1780556106131</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1780556106131</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -166,7 +211,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="lab2-factory-pattern" />
+                        <option value="main" />
                       </list>
                     </value>
                   </entry>
@@ -178,8 +223,13 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="lab2" />
+    <option name="LAST_COMMIT_MESSAGE" value="lab2" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/pythonProject1$calculator.coverage" NAME="calculator Coverage Results" MODIFIED="1780554476420" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/pythonProject1$main.coverage" NAME="main Coverage Results" MODIFIED="1780555601847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pythonProject1$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1780557039058" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/lab_2_SimpleCalculatorFactory" />
+    <SUITE FILE_PATH="coverage/pythonProject1$main.coverage" NAME="main Coverage Results" MODIFIED="1780557315513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

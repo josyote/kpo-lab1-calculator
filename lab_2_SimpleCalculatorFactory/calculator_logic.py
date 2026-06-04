@@ -1,9 +1,13 @@
+import math
+
+
 class CalculatorLogic:
     def __init__(self):
         self.current_input = "0"
         self.previous_input = ""
         self.operation = None
         self.new_number = True
+        self.pending_power = None
 
     def add_digit(self, digit):
         if self.new_number or self.current_input == "0":
@@ -66,6 +70,7 @@ class CalculatorLogic:
         self.previous_input = ""
         self.operation = None
         self.new_number = True
+        self.pending_power = None
         return self.current_input
 
     def toggle_sign(self):
@@ -93,6 +98,101 @@ class CalculatorLogic:
             return self.current_input
         except:
             return self.current_input
+
+    def add_sine(self):
+        try:
+            value = float(self.current_input)
+            result = math.sin(value)
+            self.current_input = str(result if result.is_integer() else round(result, 10))
+            self.new_number = True
+            return self.current_input
+        except:
+            return "Error"
+
+    def add_cosine(self):
+        try:
+            value = float(self.current_input)
+            result = math.cos(value)
+            self.current_input = str(result if result.is_integer() else round(result, 10))
+            self.new_number = True
+            return self.current_input
+        except:
+            return "Error"
+
+    def add_tangent(self):
+        try:
+            value = float(self.current_input)
+            result = math.tan(value)
+            self.current_input = str(result if result.is_integer() else round(result, 10))
+            self.new_number = True
+            return self.current_input
+        except:
+            return "Error"
+
+    def add_ln(self):
+        try:
+            value = float(self.current_input)
+            if value <= 0:
+                return "Error"
+            result = math.log(value)
+            self.current_input = str(result if result.is_integer() else round(result, 10))
+            self.new_number = True
+            return self.current_input
+        except:
+            return "Error"
+
+    def add_log10(self):
+        try:
+            value = float(self.current_input)
+            if value <= 0:
+                return "Error"
+            result = math.log10(value)
+            self.current_input = str(result if result.is_integer() else round(result, 10))
+            self.new_number = True
+            return self.current_input
+        except:
+            return "Error"
+
+    def add_square_root(self):
+        try:
+            value = float(self.current_input)
+            if value < 0:
+                return "Error"
+            result = math.sqrt(value)
+            self.current_input = str(result if result.is_integer() else round(result, 10))
+            self.new_number = True
+            return self.current_input
+        except:
+            return "Error"
+
+    def add_pi(self):
+        self.current_input = str(math.pi)
+        self.new_number = True
+        return self.current_input
+
+    def add_e(self):
+        self.current_input = str(math.e)
+        self.new_number = True
+        return self.current_input
+
+    def add_power(self):
+        if self.pending_power is None:
+            self.pending_power = float(self.current_input)
+            self.current_input = "0"
+            self.new_number = True
+            return "x^y"
+        else:
+            try:
+                x = self.pending_power
+                y = float(self.current_input)
+                result = x ** y
+                self.current_input = str(int(result) if result.is_integer() else round(result, 10))
+                self.pending_power = None
+                self.new_number = True
+                return self.current_input
+            except:
+                self.pending_power = None
+                return "Error"
 
     def get_display(self):
         return self.current_input
