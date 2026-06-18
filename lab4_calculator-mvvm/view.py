@@ -8,157 +8,124 @@ class CalculatorView:
         self.view_model = view_model
 
         # Configuration de la fenêtre
-        self.root.title("Калькулятор MVVM + Command Pattern v1.0")
-        self.root.geometry("360x750")
-        self.root.configure(bg="#1A1A1A")
+        self.root.title("Simple Calculator MVVM with Command")
+        self.root.geometry("450x700")
+        self.root.configure(bg="#f5f6fa")
         self.root.resizable(False, False)
 
-        # Variables pour l'interface
-        self.current_display = tk.StringVar(value="0")
-        self.history_text = tk.StringVar(value="")
-
         # Polices
-        self.display_font = font.Font(family="Segoe UI", size=40, weight="normal")
-        self.history_font = font.Font(family="Segoe UI", size=11)
-        self.button_font = font.Font(family="Segoe UI", size=14, weight="normal")
+        self.display_font = font.Font(family="Arial", size=24)
+        self.history_font = font.Font(family="Arial", size=14)
+        self.button_font = font.Font(family="Arial", size=18)
+
+        # Variables pour l'interface
+        self.current_display = tk.StringVar(value="")
+        self.history_text = tk.StringVar(value="<b>История:</b><br>")
 
         # Setup UI
         self._setup_ui()
-        self._update_display()
         self._setup_bindings()
 
     def _setup_ui(self):
         # Frame principal
-        main_frame = tk.Frame(self.root, bg="#1A1A1A")
+        main_frame = tk.Frame(self.root, bg="#f5f6fa")
         main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # ========== SECTION AFFICHAGE ==========
-        display_container = tk.Frame(main_frame, bg="#1A1A1A")
-        display_container.pack(fill=tk.X, pady=(0, 15))
-
-        display_frame = tk.Frame(
-            display_container,
-            bg="#2A2A2A",
-            height=140,
-            highlightbackground="#3A3A3A",
-            highlightthickness=1
-        )
-        display_frame.pack(fill=tk.X)
-        display_frame.pack_propagate(False)
-
-        # Historique
-        self.history_label = tk.Label(
-            display_frame,
-            textvariable=self.history_text,
-            font=self.history_font,
-            bg="#2A2A2A",
-            fg="#888888",
-            anchor="e",
-            justify="right"
-        )
-        self.history_label.pack(fill=tk.X, pady=(5, 0), padx=15)
-
-        # Affichage principal
-        self.display_label = tk.Label(
-            display_frame,
+        # Champ d'affichage
+        self.display = tk.Entry(
+            main_frame,
             textvariable=self.current_display,
             font=self.display_font,
-            bg="#2A2A2A",
-            fg="#FFFFFF",
-            anchor="e",
-            padx=15
+            bg="white",
+            fg="#2d3436",
+            justify="right",
+            relief=tk.FLAT,
+            state="readonly"
         )
-        self.display_label.pack(fill=tk.BOTH, expand=True)
+        self.display.config(highlightbackground="#dcdcdc", highlightthickness=1)
+        self.display.pack(fill=tk.X, pady=(0, 10), ipady=15)
+
+        # Champ d'historique
+        self.history_frame = tk.Frame(
+            main_frame,
+            bg="white",
+            highlightbackground="#dcdcdc",
+            highlightthickness=1
+        )
+        self.history_frame.pack(fill=tk.X, pady=(0, 10))
+
+        self.history_display = tk.Text(
+            self.history_frame,
+            font=self.history_font,
+            bg="white",
+            fg="#2d3436",
+            height=6,
+            relief=tk.FLAT,
+            state="disabled"
+        )
+        self.history_display.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
 
         # ========== SECTION CLAVIER ==========
-        keypad = tk.Frame(main_frame, bg="#1A1A1A")
+        keypad = tk.Frame(main_frame, bg="#f5f6fa")
         keypad.pack(fill=tk.BOTH, expand=True)
 
         # Configuration des couleurs
         colors = {
-            "number": {"bg": "#2A2A2A", "fg": "#FFFFFF", "active": "#3A3A3A"},
-            "operator": {"bg": "#2D2D2D", "fg": "#6C9EBF", "active": "#3D3D3D"},
-            "function": {"bg": "#252525", "fg": "#E0E0E0", "active": "#353535"},
-            "equals": {"bg": "#6C9EBF", "fg": "#FFFFFF", "active": "#5A8AB0"},
-            "undo": {"bg": "#4A2A2A", "fg": "#FF6B6B", "active": "#5A3A3A"},  # Couleur spéciale pour UNDO
+            "default": {"bg": "#ffffff", "fg": "#2d3436", "active": "#e8ecef", "hover": "#e8ecef"},
+            "operator": {"bg": "#74b9ff", "fg": "white", "active": "#339af0", "hover": "#339af0"},
+            "function": {"bg": "#dfe4ea", "fg": "#2d3436", "active": "#ced4da", "hover": "#ced4da"},
+            "equals": {"bg": "#ff7675", "fg": "white", "active": "#ff5e57", "hover": "#ff5e57"},
         }
 
-        # Définition des boutons - 8 lignes x 4 colonnes (avec UNDO)
-        buttons = [
-            # Ligne 1: C, ⌫, %, ÷
-            ("C", 0, 0, "function"), ("⌫", 0, 1, "function"),
-            ("%", 0, 2, "operator"), ("÷", 0, 3, "operator"),
-
-            # Ligne 2: 7, 8, 9, ×
-            ("7", 1, 0, "number"), ("8", 1, 1, "number"),
-            ("9", 1, 2, "number"), ("×", 1, 3, "operator"),
-
-            # Ligne 3: 4, 5, 6, −
-            ("4", 2, 0, "number"), ("5", 2, 1, "number"),
-            ("6", 2, 2, "number"), ("−", 2, 3, "operator"),
-
-            # Ligne 4: 1, 2, 3, +
-            ("1", 3, 0, "number"), ("2", 3, 1, "number"),
-            ("3", 3, 2, "number"), ("+", 3, 3, "operator"),
-
-            # Ligne 5: ±, 0, ., =
-            ("±", 4, 0, "function"), ("0", 4, 1, "number"),
-            (".", 4, 2, "number"), ("=", 4, 3, "equals"),
-
-            # Ligne 6: sin, cos, tan, √
-            ("sin", 5, 0, "function"), ("cos", 5, 1, "function"),
-            ("tan", 5, 2, "function"), ("√", 5, 3, "function"),
-
-            # Ligne 7: ln, log, π, ^
-            ("ln", 6, 0, "function"), ("log", 6, 1, "function"),
-            ("π", 6, 2, "function"), ("^", 6, 3, "operator"),
-
-            # Ligne 8: UNDO (occupe 4 colonnes)
-            ("↩ UNDO", 7, 0, "undo", 4),  # 4 = span
+        # Layout des boutons (identique à l'exemple PyQt)
+        button_layout = [
+            # Ligne 1: C, ⌫, (, ), ÷
+            ('C', 0, 0, 'function'), ('⌫', 0, 1, 'function'), ('(', 0, 2, 'default'), (')', 0, 3, 'default'),
+            ('÷', 0, 4, 'operator'),
+            # Ligne 2: sin, cos, 7, 8, 9
+            ('sin', 1, 0, 'function'), ('cos', 1, 1, 'function'), ('7', 1, 2, 'default'), ('8', 1, 3, 'default'),
+            ('9', 1, 4, 'default'),
+            # Ligne 3: tan, ln, 4, 5, 6
+            ('tan', 2, 0, 'function'), ('ln', 2, 1, 'function'), ('4', 2, 2, 'default'), ('5', 2, 3, 'default'),
+            ('6', 2, 4, 'default'),
+            # Ligne 4: √, π, 1, 2, 3
+            ('√', 3, 0, 'function'), ('π', 3, 1, 'function'), ('1', 3, 2, 'default'), ('2', 3, 3, 'default'),
+            ('3', 3, 4, 'default'),
+            # Ligne 5: e, ^, 0, ., =
+            ('e', 4, 0, 'function'), ('^', 4, 1, 'operator'), ('0', 4, 2, 'default'), ('.', 4, 3, 'default'),
+            ('=', 4, 4, 'equals'),
+            # Ligne 6: log, %, ×, −, +
+            ('log', 5, 0, 'function'), ('%', 5, 1, 'operator'), ('×', 5, 2, 'operator'), ('−', 5, 3, 'operator'),
+            ('+', 5, 4, 'operator'),
+            # Ligne 7: Undo (occupe 5 colonnes)
+            ('Undo', 6, 0, 'function', 5)
         ]
 
         # Création des boutons
-        for btn in buttons:
+        self.buttons = {}
+        for btn in button_layout:
             text = btn[0]
             row = btn[1]
             col = btn[2]
             style = btn[3]
             span = btn[4] if len(btn) > 4 else 1
 
-            color = colors.get(style, colors["number"])
+            color = colors.get(style, colors["default"])
 
-            frame = tk.Frame(keypad, bg="#0A0A0A")
-            frame.grid(row=row, column=col, columnspan=span, padx=2, pady=2, sticky="nsew")
+            frame = tk.Frame(keypad, bg="#f5f6fa")
+            frame.grid(row=row, column=col, columnspan=span, padx=4, pady=4, sticky="nsew")
 
-            # Déterminer la commande
-            if style == "number":
-                if text == ".":
-                    command = self._on_decimal
-                elif text == "0":
-                    command = lambda t=text: self._on_digit(t)
-                else:
-                    command = lambda t=text: self._on_digit(t)
-            elif style == "operator":
-                command = lambda t=text: self._on_operator(t)
-            elif style == "function":
-                if text == "C":
-                    command = self._on_clear
-                elif text == "⌫":
-                    command = self._on_backspace
-                elif text == "±":
-                    command = self._on_toggle_sign
-                elif text == "%":
-                    command = self._on_percent
-                else:
-                    command = lambda t=text: self._on_function(t)
-            elif style == "equals":
-                command = self._on_equals
-            elif style == "undo":
-                command = self._on_undo
+            # Texte spécial pour certains boutons
+            display_text = text
+            if text == '√':
+                display_text = "√x"
+            elif text == '^':
+                display_text = "x^y"
 
             btn_widget = tk.Button(
                 frame,
-                text=text,
+                text=display_text,
                 font=self.button_font,
                 bg=color["bg"],
                 fg=color["fg"],
@@ -166,167 +133,127 @@ class CalculatorView:
                 activeforeground=color["fg"],
                 relief=tk.FLAT,
                 bd=0,
-                command=command,
                 cursor="hand2",
                 height=2,
             )
+
+            # Si c'est Undo, on ajuste la largeur
+            if text == 'Undo':
+                btn_widget.config(width=20)
+
             btn_widget.pack(fill=tk.BOTH, expand=True)
 
             # Effet de survol
-            btn_widget.bind("<Enter>", lambda e, b=btn_widget, c=color: b.configure(bg="#3A3A3A"))
+            btn_widget.bind("<Enter>", lambda e, b=btn_widget, c=color: b.configure(bg=c["hover"]))
             btn_widget.bind("<Leave>", lambda e, b=btn_widget, c=color: b.configure(bg=color["bg"]))
 
+            # Commande
+            if text == '=':
+                command = lambda t=text: self._on_button_click(t)
+            elif text == 'C':
+                command = lambda t=text: self._on_button_click(t)
+            elif text == '⌫':
+                command = lambda t=text: self._on_button_click(t)
+            elif text == 'Undo':
+                command = lambda t=text: self._on_button_click(t)
+            else:
+                command = lambda t=text: self._on_button_click(t)
+
+            btn_widget.config(command=command)
+            self.buttons[text] = btn_widget
+
         # Configuration de la grille
-        for i in range(8):
+        for i in range(7):
             keypad.grid_rowconfigure(i, weight=1)
-        for i in range(4):
+        for i in range(5):
             keypad.grid_columnconfigure(i, weight=1)
 
     def _setup_bindings(self):
         """Configure les raccourcis clavier"""
         self.root.bind("<Key>", self._on_key_press)
-        self.root.bind("<Return>", lambda e: self._on_equals())
-        self.root.bind("<BackSpace>", lambda e: self._on_backspace())
-        self.root.bind("<Escape>", lambda e: self._on_clear())
-        self.root.bind("<Control-z>", lambda e: self._on_undo())  # Ctrl+Z pour UNDO
+        self.root.bind("<Return>", lambda e: self._on_button_click('='))
+        self.root.bind("<BackSpace>", lambda e: self._on_button_click('⌫'))
+        self.root.bind("<Escape>", lambda e: self._on_button_click('C'))
+        self.root.bind("<Control-z>", lambda e: self._on_button_click('Undo'))
+
+    def _on_button_click(self, char):
+        """Gère le clic sur un bouton"""
+        char = char.replace('√x', '√').replace('−', '-').replace('×', '*').replace('x^y', '^')
+
+        if char == '=':
+            # Émettre le signal calculate
+            self.calculate_signal(self.current_display.get())
+        elif char == 'C':
+            self.clear_signal()
+        elif char == '⌫':
+            self.backspace_signal()
+        elif char == 'Undo':
+            self.undo_signal()
+        else:
+            # Ajouter le caractère à l'affichage
+            current_text = self.current_display.get()
+            display_char = char.replace('*', '×').replace('-', '−').replace('^', 'x^y')
+            self.current_display.set(current_text + display_char)
+
+    # ========== SIGNALS (remplacement des signaux PyQt) ==========
+
+    def calculate_signal(self, expression):
+        """Signal pour le calcul"""
+        result = self.view_model.calculate(expression)
+        self.set_result(result)
+        self.update_history(self.view_model.history)
+
+    def backspace_signal(self):
+        """Signal pour backspace"""
+        self.backspace()
+        self.set_result(self.view_model.backspace(self.current_display.get()))
+
+    def clear_signal(self):
+        """Signal pour clear"""
+        self.clear_display()
+        self.view_model.clear()
+
+    def undo_signal(self):
+        """Signal pour undo"""
+        self.set_result(self.view_model.undo())
+        self.update_history(self.view_model.history)
 
     # ========== MÉTHODES DE L'INTERFACE ==========
 
-    def _update_display(self):
-        """Met à jour l'affichage avec la valeur du ViewModel"""
-        value = self.view_model.get_display_value()
-        if not value:
-            value = "0"
-        self.current_display.set(value)
-
-    def _update_history(self):
-        """Met à jour l'historique"""
-        history = self.view_model.get_history()
-        if history:
-            display = "\n".join(history[-5:])
-            self.history_text.set(display)
-        else:
-            self.history_text.set("")
-
-    # ========== GESTIONNAIRES D'ÉVÉNEMENTS ==========
-
-    def _on_digit(self, digit):
-        """Ajoute un chiffre"""
-        self.view_model.append_char(digit)
-        self._update_display()
-        self._update_history()
-
-    def _on_decimal(self):
-        """Ajoute un point décimal"""
-        # Vérifier si un point existe déjà dans le nombre courant
-        expr = self.view_model.current_expression
-        import re
-        numbers = re.findall(r'[\d.]+$', expr)
-        if numbers and '.' in numbers[-1]:
-            return
-        self.view_model.append_char(".")
-        self._update_display()
-
-    def _on_operator(self, op):
-        """Ajoute un opérateur"""
-        op_map = {"×": "*", "−": "-", "÷": "/", "+": "+", "^": "**"}
-        real_op = op_map.get(op, op)
-
-        expr = self.view_model.current_expression
-        # Si l'expression se termine par un opérateur, le remplacer
-        if expr and expr[-1] in '+-*/^':
-            self.view_model.current_expression = expr[:-1]
-
-        self.view_model.append_char(real_op)
-        self._update_display()
-
-    def _on_function(self, func):
-        """Ajoute une fonction"""
-        func_map = {
-            "sin": "sin(",
-            "cos": "cos(",
-            "tan": "tan(",
-            "√": "√(",
-            "ln": "ln(",
-            "log": "log(",
-            "π": "π",
-        }
-        value = func_map.get(func, func)
-
-        if self.view_model.result_shown:
-            self.view_model.clear()
-
-        self.view_model.append_char(value)
-        self._update_display()
-
-    def _on_percent(self):
-        """Ajoute le pourcentage"""
-        self.view_model.append_char("%")
-        self._update_display()
-
-    def _on_toggle_sign(self):
-        """Change le signe"""
-        expr = self.view_model.current_expression
-        if not expr or expr == "0":
-            return
-
-        # Si l'expression est un nombre simple
-        if expr.startswith('-'):
-            self.view_model.current_expression = expr[1:]
-        else:
-            self.view_model.current_expression = '-' + expr
-        self._update_display()
-
-    def _on_equals(self):
-        """Calcule le résultat"""
-        expr = self.view_model.current_expression
-        if not expr:
-            return
-
-        result = self.view_model.calculate(expr)
+    def set_result(self, result: str):
         self.current_display.set(result)
-        self._update_history()
 
-        if "Erreur" not in result:
-            self.view_model.current_expression = result
-            self.view_model.result_shown = True
-            self.view_model.last_result = result
+    def update_history(self, history: list):
+        self.history_display.config(state="normal")
+        self.history_display.delete("1.0", tk.END)
+        self.history_display.insert("1.0", "История:\n")
+        self.history_display.insert(tk.END, "\n".join(history[-5:]))
+        self.history_display.config(state="disabled")
 
-    def _on_clear(self):
-        """Efface tout avec Command Pattern"""
-        self.view_model.clear()
-        self._update_display()
-        self._update_history()
+    def clear_display(self):
+        self.current_display.set("")
+        self.history_display.config(state="normal")
+        self.history_display.delete("1.0", tk.END)
+        self.history_display.insert("1.0", "История:\n")
+        self.history_display.config(state="disabled")
 
-    def _on_backspace(self):
-        """Supprime le dernier caractère avec Command Pattern"""
-        self.view_model.backspace()
-        self._update_display()
-
-    def _on_undo(self):
-        """Annule la dernière action avec Command Pattern"""
-        result = self.view_model.undo()
-        self.current_display.set(result)
-        self._update_history()
+    def backspace(self):
+        current_text = self.current_display.get()
+        if current_text:
+            self.current_display.set(current_text[:-1])
 
     def _on_key_press(self, event):
         """Gère les touches du clavier"""
         key = event.char
 
         if key.isdigit():
-            self._on_digit(key)
+            self._on_button_click(key)
         elif key == ".":
-            self._on_decimal()
+            self._on_button_click(".")
         elif key in "+-*/":
             op_map = {"+": "+", "-": "−", "*": "×", "/": "÷"}
-            self._on_operator(op_map.get(key, key))
-        elif key == "%":
-            self._on_percent()
-        elif key == "=" or key == "\r":
-            self._on_equals()
-        elif event.keysym == "BackSpace":
-            self._on_backspace()
-        elif event.keysym == "Escape":
-            self._on_clear()
-        elif event.keysym == "z" and event.state & 0x4:  # Ctrl+Z
-            self._on_undo()
+            self._on_button_click(op_map.get(key, key))
+        elif key == "=":
+            self._on_button_click("=")
+        elif key == "\r":  # Enter
+            self._on_button_click("=")
