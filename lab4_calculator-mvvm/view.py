@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import font
-from model import CalculatorModel
-from viewmodel import CalculatorViewModel
 
 
 class CalculatorView:
@@ -10,8 +8,8 @@ class CalculatorView:
         self.view_model = view_model
 
         # Configuration de la fenêtre
-        self.root.title("Калькулятор MVVM v2.0")
-        self.root.geometry("360x700")
+        self.root.title("Калькулятор MVVM + Command Pattern v1.0")
+        self.root.geometry("360x750")
         self.root.configure(bg="#1A1A1A")
         self.root.resizable(False, False)
 
@@ -41,7 +39,7 @@ class CalculatorView:
         display_frame = tk.Frame(
             display_container,
             bg="#2A2A2A",
-            height=130,
+            height=140,
             highlightbackground="#3A3A3A",
             highlightthickness=1
         )
@@ -82,9 +80,10 @@ class CalculatorView:
             "operator": {"bg": "#2D2D2D", "fg": "#6C9EBF", "active": "#3D3D3D"},
             "function": {"bg": "#252525", "fg": "#E0E0E0", "active": "#353535"},
             "equals": {"bg": "#6C9EBF", "fg": "#FFFFFF", "active": "#5A8AB0"},
+            "undo": {"bg": "#4A2A2A", "fg": "#FF6B6B", "active": "#5A3A3A"},  # Couleur spéciale pour UNDO
         }
 
-        # Définition des boutons - 7 lignes x 4 colonnes
+        # Définition des boutons - 8 lignes x 4 colonnes (avec UNDO)
         buttons = [
             # Ligne 1: C, ⌫, %, ÷
             ("C", 0, 0, "function"), ("⌫", 0, 1, "function"),
@@ -113,19 +112,30 @@ class CalculatorView:
             # Ligne 7: ln, log, π, ^
             ("ln", 6, 0, "function"), ("log", 6, 1, "function"),
             ("π", 6, 2, "function"), ("^", 6, 3, "operator"),
+
+            # Ligne 8: UNDO (occupe 4 colonnes)
+            ("↩ UNDO", 7, 0, "undo", 4),  # 4 = span
         ]
 
         # Création des boutons
-        for text, row, col, style in buttons:
-            color = colors[style]
+        for btn in buttons:
+            text = btn[0]
+            row = btn[1]
+            col = btn[2]
+            style = btn[3]
+            span = btn[4] if len(btn) > 4 else 1
+
+            color = colors.get(style, colors["number"])
 
             frame = tk.Frame(keypad, bg="#0A0A0A")
-            frame.grid(row=row, column=col, padx=2, pady=2, sticky="nsew")
+            frame.grid(row=row, column=col, columnspan=span, padx=2, pady=2, sticky="nsew")
 
             # Déterminer la commande
             if style == "number":
                 if text == ".":
                     command = self._on_decimal
+                elif text == "0":
+                    command = lambda t=text: self._on_digit(t)
                 else:
                     command = lambda t=text: self._on_digit(t)
             elif style == "operator":
@@ -143,8 +153,10 @@ class CalculatorView:
                     command = lambda t=text: self._on_function(t)
             elif style == "equals":
                 command = self._on_equals
+            elif style == "undo":
+                command = self._on_undo
 
-            btn = tk.Button(
+            btn_widget = tk.Button(
                 frame,
                 text=text,
                 font=self.button_font,
@@ -158,14 +170,14 @@ class CalculatorView:
                 cursor="hand2",
                 height=2,
             )
-            btn.pack(fill=tk.BOTH, expand=True)
+            btn_widget.pack(fill=tk.BOTH, expand=True)
 
             # Effet de survol
-            btn.bind("<Enter>", lambda e, b=btn, c=color: b.configure(bg="#3A3A3A"))
-            btn.bind("<Leave>", lambda e, b=btn, c=color: b.configure(bg=color["bg"]))
+            btn_widget.bind("<Enter>", lambda e, b=btn_widget, c=color: b.configure(bg="#3A3A3A"))
+            btn_widget.bind("<Leave>", lambda e, b=btn_widget, c=color: b.configure(bg=color["bg"]))
 
         # Configuration de la grille
-        for i in range(7):
+        for i in range(8):
             keypad.grid_rowconfigure(i, weight=1)
         for i in range(4):
             keypad.grid_columnconfigure(i, weight=1)
@@ -176,6 +188,7 @@ class CalculatorView:
         self.root.bind("<Return>", lambda e: self._on_equals())
         self.root.bind("<BackSpace>", lambda e: self._on_backspace())
         self.root.bind("<Escape>", lambda e: self._on_clear())
+        self.root.bind("<Control-z>", lambda e: self._on_undo())  # Ctrl+Z pour UNDO
 
     # ========== MÉTHODES DE L'INTERFACE ==========
 
@@ -205,6 +218,12 @@ class CalculatorView:
 
     def _on_decimal(self):
         """Ajoute un point décimal"""
+        # Vérifier si un point existe déjà dans le nombre courant
+        expr = self.view_model.current_expression
+        import re
+        numbers = re.findall(r'[\d.]+$', expr)
+        if numbers and '.' in numbers[-1]:
+            return
         self.view_model.append_char(".")
         self._update_display()
 
@@ -215,7 +234,7 @@ class CalculatorView:
 
         expr = self.view_model.current_expression
         # Si l'expression se termine par un opérateur, le remplacer
-        if expr and expr[-1] in '+-*/':
+        if expr and expr[-1] in '+-*/^':
             self.view_model.current_expression = expr[:-1]
 
         self.view_model.append_char(real_op)
@@ -227,10 +246,10 @@ class CalculatorView:
             "sin": "sin(",
             "cos": "cos(",
             "tan": "tan(",
-            "√": "sqrt(",
-            "ln": "log(",
-            "log": "log10(",
-            "π": "pi",
+            "√": "√(",
+            "ln": "ln(",
+            "log": "log(",
+            "π": "π",
         }
         value = func_map.get(func, func)
 
@@ -274,15 +293,21 @@ class CalculatorView:
             self.view_model.last_result = result
 
     def _on_clear(self):
-        """Efface tout"""
+        """Efface tout avec Command Pattern"""
         self.view_model.clear()
         self._update_display()
         self._update_history()
 
     def _on_backspace(self):
-        """Supprime le dernier caractère"""
+        """Supprime le dernier caractère avec Command Pattern"""
         self.view_model.backspace()
         self._update_display()
+
+    def _on_undo(self):
+        """Annule la dernière action avec Command Pattern"""
+        result = self.view_model.undo()
+        self.current_display.set(result)
+        self._update_history()
 
     def _on_key_press(self, event):
         """Gère les touches du clavier"""
@@ -303,12 +328,5 @@ class CalculatorView:
             self._on_backspace()
         elif event.keysym == "Escape":
             self._on_clear()
-
-
-# ========== MAIN ==========
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    view_model = CalculatorViewModel()
-    view = CalculatorView(root, view_model)
-    root.mainloop()
+        elif event.keysym == "z" and event.state & 0x4:  # Ctrl+Z
+            self._on_undo()
